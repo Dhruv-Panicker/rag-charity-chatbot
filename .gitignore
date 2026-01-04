@@ -37,10 +37,13 @@ config/api_keys.json
 data/raw/
 data/processed/
 data/pdfs/
+data/generated_pdfs/
+data/document_storage/
 models/embeddings/
 models/checkpoints/
 *.pkl
 *.joblib
+*.pdf
 
 # Logs
 logs/
