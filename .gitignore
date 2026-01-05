@@ -44,6 +44,7 @@ models/checkpoints/
 *.pkl
 *.joblib
 *.pdf
+*.bin
 
 # Logs
 logs/
@@ -76,7 +77,9 @@ Thumbs.db
 .DS_Store
 
 # Project specific
-embeddings/
+*.embeddings/
+.embeddings/
 vector_store/
+cached_embeddings/
 scraped_content/
 temp/
