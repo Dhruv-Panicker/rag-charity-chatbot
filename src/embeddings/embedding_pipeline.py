@@ -37,6 +37,12 @@ class EmbeddingPipeline:
             logger.info("Generating embeddings...")
             chunks = self.embedding_gen.embed_chunks(chunks)
 
+            #Add metadata to each chunk (required by Chroma)
+            for chunk in chunks:
+                if 'metadata' not in chunk or not chunk['metadata']:
+                    chunk['metadata'] = {}
+                chunk['metadata']['charity_name'] = charity_name
+
             #Create colllection in vector DB 
             logger.info("Creating vector DB collection...")
             collection_name = charity_name.lower().replace(" ", "_")
