@@ -283,22 +283,4 @@ class SiteMapper:
             time.sleep(1)  # Add delay 
 
         logger.info(f"Discovered {len(discovered)} pages")
-        return discovered     
-
-
-
-            
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-
+        return discovered

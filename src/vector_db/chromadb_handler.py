@@ -31,10 +31,11 @@ class ChromaVectorDB:
         logger.info(f"Collection '{name}' is ready")
 
     #Get existing collection by name
-    def get_collection(self, name: str) -> None: 
+    def get_collection(self, name: str):
         try: 
             self.collection = self.client.get_collection(name=name)
             logger.info(f"Retrieved collection '{name}'")
+            return self.collection
         except Exception as e:
             logger.error(f"Failed to retrieve collection '{name}': {e}")
             raise
