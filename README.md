@@ -1,212 +1,302 @@
 # RAG Charity Chatbot
 
-An intelligent retrieval-augmented generation (RAG) chatbot that automatically scrapes charity websites and provides accurate, context-grounded answers to user queries using the information from those websites.
+A terminal-based retrieval-augmented generation (RAG) chatbot system that scrapes charity websites and provides accurate, context-grounded answers to user queries about charity information.
 
 ## Project Overview
 
-This project aims to make charity information more accessible by leveraging modern AI techniques. Instead of navigating complex website structures, users can simply ask questions about a charity's mission, history, donation information, and more—all through an intelligent chatbot powered by retrieval-augmented generation.
+This project makes charity information more accessible through intelligent question-answering. Users can scrape a charity website and immediately start asking questions about the organization's mission, programs, donation methods, and more. The system uses semantic search with embeddings and an LLM to generate accurate, sourced answers.
 
-### Use Cases
-- **Charity Information Retrieval**: Get quick answers about charity missions, history, and impact
-- **Donation Guidance**: Find out how to donate and understand fund allocation
-- **Program Information**: Learn about specific programs and services offered
-- **Contact & Support**: Quick access to frequently asked questions and contact information
+### Key Features
+
+- Web scraping with Requests and Selenium fallback for JavaScript-heavy sites
+- Automatic document chunking and semantic embedding using Sentence Transformers
+- Vector database storage with Chroma for fast semantic search
+- RAG pipeline combining retrieval with OpenAI LLM generation
+- Multi-turn conversation support with session management
+- Terminal CLI interface for easy interaction
+- Minimal similarity threshold (0.15) for comprehensive context retrieval
+- Response reranking for quality assurance
 
 ## Technology Stack
 
-### Core Components
-- **Web Scraping**: BeautifulSoup, Selenium
-- **PDF Processing**: PyPDF2, ReportLab
-- **LLM Integration**: OpenAI GPT-4, Anthropic Claude
-- **Embeddings**: Sentence Transformers
-- **Vector Database**: Chroma (development), Pinecone (production)
-- **Backend API**: FastAPI
-- **Frontend**: React (planned)
-
-### Development Tools
-- **Testing**: pytest
-- **Code Quality**: black, flake8, mypy
+- **Web Scraping**: BeautifulSoup, Selenium, Requests
+- **Embeddings**: Sentence Transformers (all-MiniLM-L6-v2)
+- **Vector Database**: Chroma (persistent storage)
+- **LLM**: OpenAI (GPT-3.5-turbo, GPT-4o, GPT-4o-mini)
+- **Backend API**: FastAPI with CORS support
+- **Python**: 3.13
 - **Logging**: loguru
-- **Data Processing**: pandas, scikit-learn
 
-
-## Installation & Setup
+## Installation
 
 ### Prerequisites
+
 - Python 3.10 or higher
-- pip or conda
-- Git
+- OpenAI API key
+- Virtual environment (recommended)
 
-**Required API Keys:**
-- `OPENAI_API_KEY`: Get from [OpenAI Platform](https://platform.openai.com)
-- `ANTHROPIC_API_KEY`: Get from [Anthropic Console](https://console.anthropic.com)
+### Setup Steps
 
-### Step 5: Verify Installation
+1. Clone the repository:
 ```bash
-python -c "from config import settings; print('Configuration loaded successfully')"
+git clone <repository-url>
+cd rag-charity-chatbot
 ```
 
-## Development Roadmap
-
-### Phase 1: Foundation & Setup ✅
-- [x] Project structure
-- [x] Virtual environment
-- [x] Dependencies
-- [x] Configuration management
-- [ ] Git initialization
-
-### Phase 2: Data Ingestion Pipeline
-- [ ] Web scraper module
-- [ ] PDF generation
-- [ ] Document storage system
-
-### Phase 3: Vector Database & Embeddings
-- [ ] Document chunking strategies
-- [ ] Embedding generation
-- [ ] Vector database setup
-
-### Phase 4: RAG Retrieval & LLM Integration
-- [ ] Retrieval module
-- [ ] Prompt engineering
-- [ ] LLM integration
-
-### Phase 5: Web Interface & API
-- [ ] FastAPI backend
-- [ ] REST endpoints
-- [ ] Frontend web interface
-
-### Phase 6: Evaluation & Optimization
-- [ ] Retrieval evaluation metrics
-- [ ] Generation quality assessment
-- [ ] Cost & performance analysis
-
-### Phase 7: Advanced Features
-- [ ] Multi-format support
-- [ ] Semantic search improvements
-- [ ] Feedback loop implementation
-
-### Phase 8: Documentation & Deployment
-- [ ] Complete documentation
-- [ ] Deployment setup
-- [ ] Demo and case studies
-
-## Quick Start (Once Setup Complete)
-
-```python
-from config import settings
-from src.scraper import WebScraper
-from src.ingestion import PDFGenerator
-from src.embeddings import EmbeddingModel
-from src.rag import RAGChatbot
-
-# 1. Scrape charity website
-scraper = WebScraper(settings.headless_browser)
-content = scraper.scrape("https://example-charity.org")
-
-# 2. Generate PDF
-pdf_gen = PDFGenerator()
-pdf_gen.create_pdf(content, "charity_info.pdf")
-
-# 3. Generate embeddings
-embedder = EmbeddingModel(settings.embedding_model)
-embeddings = embedder.embed_document("charity_info.pdf")
-
-# 4. Initialize RAG chatbot
-chatbot = RAGChatbot()
-response = chatbot.query("What is this charity about?")
-print(response)
+2. Create and activate virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-## Configuration Guide
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-### Key Settings in `.env`
+4. Set environment variables:
+```bash
+export OPENAI_API_KEY='your-api-key-here'
+export OPENAI_MODEL='gpt-3.5-turbo'  # Optional
+```
 
-#### LLM Configuration
-- `LLM_MODEL`: Which LLM to use (gpt-4, claude-3-sonnet, etc.)
-- `TEMPERATURE`: Response creativity (0.0 = deterministic, 1.0 = creative)
-- `MAX_TOKENS`: Maximum response length
+5. Verify installation:
+```bash
+python -c "from src.rag.rag_system import RAGSystem; print('Installation successful')"
+```
 
-#### Embedding Configuration
-- `EMBEDDING_MODEL`: Model for generating embeddings
-- `EMBEDDING_DIMENSION`: Dimension of embedding vectors
+## Quick Start
 
-#### Vector Database
-- `VECTOR_DB_TYPE`: Choose between `chroma` or `pinecone`
-- `CHROMA_DB_PATH`: Local path for Chroma database
+### Running the Terminal Chatbot
 
-#### RAG Configuration
-- `TOP_K_RETRIEVAL`: Number of documents to retrieve for context
-- `SIMILARITY_THRESHOLD`: Minimum relevance score to include document
-- `CHUNK_SIZE`: Size of document chunks for embedding
-- `CHUNK_OVERLAP`: Overlap between chunks for context continuity
+```bash
+python scripts/cli_chatbot.py
+```
+
+This starts an interactive terminal session where you can:
+
+1. Enter a charity website URL
+2. Choose to scrape homepage only or entire site
+3. Start asking questions about the charity
+4. Type 'exit' or 'quit' to end the session
+
+
+
+### Running the Backend API
+
+To run the REST API server:
+
+```bash
+python scripts/run_backend.py
+```
+
+The API will be available at http://localhost:8000 with documentation at http://localhost:8000/docs
+
+## API Documentation
+
+### Swagger UI
+
+Access the interactive Swagger documentation at:
+
+```
+http://localhost:8000/docs
+```
+
+From the Swagger interface you can:
+- View all available endpoints
+- See request/response schemas
+- Try endpoints directly with custom parameters
+- View example requests and responses
+
+
+### Available Endpoints
+
+**Chat Endpoints**
+- `POST /chat/` - Send a query and receive an answer with sources
+- `GET /chat/history/{session_id}` - Retrieve conversation history for a session
+- `DELETE /chat/history/{session_id}` - Clear conversation history
+
+**Scrape Endpoints**
+- `POST /scrape/` - Scrape a website and index it into the vector database
+- `GET /scrape/charities` - List all indexed charities and their chunk counts
+
+**System Endpoints**
+- `GET /health` - Check API health status and component status
+- `GET /` - Get service information and available endpoints
+
+### Example API Calls
+
+Query the chatbot:
+```bash
+curl -X POST "http://localhost:8000/chat/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "What programs does this charity offer?",
+    "charity_name": "Sewacanada",
+    "top_k": 5,
+    "session_id": "session-123"
+  }'
+```
+
+List indexed charities:
+```bash
+curl "http://localhost:8000/scrape/charities"
+```
+
+Get health status:
+```bash
+curl "http://localhost:8000/health"
+```
+
+## Running the Backend API
+
+To run the REST API server:
+
+```bash
+python scripts/run_backend.py
+```
+
+The API will be available at http://localhost:8000 with documentation at http://localhost:8000/docs
+
+## System Architecture
+
+### Core Components
+
+**Document Processing**
+- Scraper: Retrieves content from websites with JavaScript rendering support
+- HTMLCleaner: Removes noise elements and extracts readable text
+- Chunker: Splits documents into fixed-size chunks with configurable overlap
+
+**Embedding & Storage**
+- EmbeddingGenerator: Uses Sentence Transformers to convert text to 384-dimensional vectors
+- ChromaVectorDB: Persists embeddings and enables semantic search
+- Collections organized by charity name
+
+**RAG Pipeline**
+- SemanticRetriever: Performs vector similarity search with configurable threshold
+- PromptFormatter: Constructs system and user prompts with context
+- OpenAIProvider: Interfaces with OpenAI API for generation
+- RAGSystem: Orchestrates retrieval, formatting, and generation
+
+**API Endpoints**
+- GET /health - Server health status
+- GET / - Service information
+- POST /chat/ - Query the chatbot
+- GET /chat/history/{session_id} - Retrieve conversation history
+- DELETE /chat/history/{session_id} - Clear conversation history
+- GET /scrape/charities - List indexed charities
+- POST /scrape/ - Scrape and index a new website
+
+## Configuration
+
+Key parameters can be adjusted in the code:
+
+**Retrieval Configuration**
+- `top_k`: Number of chunks to retrieve (default: 5)
+- `similarity_threshold`: Minimum relevance score (default: 0.15)
+- `rerank`: Enable reranking by similarity (default: True)
+
+**Chunking Configuration**
+- `chunk_size`: Fixed size in tokens (default: 256)
+- `overlap`: Token overlap between chunks (default: 50)
+
+**LLM Configuration**
+- `model_name`: OpenAI model to use
+- `temperature`: Response creativity (default: 0.7)
+- `max_tokens`: Maximum response length (default: 1024)
 
 ## Testing
 
-```bash
-# Run all tests
-pytest
-
-# Run tests with coverage
-pytest --cov=src tests/
-
-# Run specific test file
-pytest tests/test_scraper.py -v
-```
-
-## Code Quality
+Run the comprehensive API test suite:
 
 ```bash
-# Format code
-black src/
-
-# Check code style
-flake8 src/
-
-# Type checking
-mypy src/
-
-# Sort imports
-isort src/
+python scripts/test_backend_api.py
 ```
 
+Test the RAG system directly:
+
+```bash
+python scripts/test_rag_system.py
+```
+
+## Project Status
+
+Completed:
+- Web scraping with fallback mechanisms
+- Document chunking and embedding
+- Vector database setup and persistence
+- RAG retrieval and generation pipeline
+- Multi-turn conversation management
+- Terminal CLI interface
+- REST API with all endpoints
+- Comprehensive testing
+
+Potential Future Enhancements:
+- Support for additional document formats (PDFs, images)
+- Web UI interface
+- Multi-language support
+- Fine-tuned models for specific charity types
+- Caching layer for repeated queries
+- Analytics and usage tracking
 
 ## Troubleshooting
 
-### Import Errors
+**Import Errors**
+Ensure virtual environment is activated and all dependencies installed:
 ```bash
-# Ensure virtual environment is activated
 source venv/bin/activate
-
-# Reinstall dependencies
-pip install -r requirements.txt --force-reinstall
+pip install -r requirements.txt
 ```
 
-### API Key Issues
-- Verify `.env` file exists and is not ignored by git
-- Check API key validity in their respective platforms
-- Never commit actual `.env` file to git
+**API Key Issues**
+- Verify OPENAI_API_KEY is set: `echo $OPENAI_API_KEY`
+- Check API key validity in OpenAI dashboard
+- Never commit API keys to version control
 
-### Database Errors
-- Clear Chroma cache: `rm -rf ./data/vector_store`
-- Reset database: `rm ./data/app.db`
-- Reinitialize: `python -m src.setup`
+**Scraping Failures**
+- Website may have anti-bot protection
+- Try homepage-only mode for initial test
+- Some sites may require JavaScript rendering (automatic fallback attempts this)
 
-## Documentation
+**Low Retrieval Performance**
+- Current similarity threshold is 0.15 (permissive)
+- Try more specific query wording
+- Ensure website has substantial text content
 
-- [Architecture Overview](#) - Coming soon
-- [API Reference](#) - Coming soon
-- [Development Guide](#) - Coming soon
+**Slow Embedding Generation**
+- Initial embedding generation takes time for large documents
+- Subsequent queries use cached embeddings
+- Batching processes multiple documents efficiently
 
+## Development
+
+### Project Structure
+
+Core modules are organized by function:
+- Scraping and ingestion
+- Embedding and vectorization
+- Vector database operations
+- RAG system orchestration
+- LLM client integration
+- CLI interface
+- REST API routes
+
+### Running Tests
+
+```bash
+# Test backend API
+python scripts/test_backend_api.py
+
+# Test RAG components
+python scripts/test_rag_system.py
+```
 
 ## License
 
 MIT License - see LICENSE file for details
 
-## Contact & Support
-
-For questions or feedback, please open an issue on GitHub or contact the maintainer.
-
 ---
 
-**Last Updated**: January 3, 2026  
-**Status**: Phase 1 - Foundation Setup Complete ✅
+Last Updated: January 6, 2026
+Status: CLI chatbot fully functional and tested
+
